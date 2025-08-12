@@ -658,9 +658,11 @@ if __name__ == "__main__":
 
     print("Please input the path and name of the parameter file (json format): ")
     root = tk.Tk()
-    root.deiconify()  # 打开主窗口
-    paramDirPathAndName = filedialog.askopenfilename()  # 打开文件选择对话框
-    root.destroy()  # 关闭主窗口
+    # root.deiconify()  # 打开主窗口
+    # paramDirPathAndName = filedialog.askopenfilename()  # 打开文件选择对话框
+    # root.destroy()  # 关闭主窗口
+    
+    paramDirPathAndName = "/Users/jelly/Desktop/pytvzhen/1.json"  # 默认参数文件名
 
     # 检查paramDirPathAndName是否存在，是否为json文件
     if not os.path.exists(paramDirPathAndName) or not os.path.isfile(paramDirPathAndName) or not paramDirPathAndName.endswith(".json"):
@@ -715,11 +717,15 @@ if __name__ == "__main__":
                 executeLog.write(f"[WORK -] Skip downloading video.")
                 print("Now at: " + str(datetime.datetime.now()))
             else:
-                yt = YouTube(f'https://www.youtube.com/watch?v={videoId}', proxies=proxies, on_progress_callback=on_progress)
-                video  = yt.streams.filter(progressive=True, file_extension='mp4').order_by('resolution').asc().first()
-                video.download(output_path=workPath, filename=voiceFileName)
-                # go back to the script directory
-                executeLog.write(f"[WORK o] Download video {videoId} to {viedoFileNameAndPath} whith {video.resolution}.")
+                # yt = YouTube(f'https://www.youtube.com/watch?v={videoId}', proxies=proxies, on_progress_callback=on_progress)
+                # video  = yt.streams.filter(progressive=True, file_extension='mp4').order_by('resolution').asc().first()
+                # video.download(output_path=workPath, filename=voiceFileName)
+                # # go back to the script directory
+                # executeLog.write(f"[WORK o] Download video {videoId} to {viedoFileNameAndPath} whith {video.resolution}.")
+                http_video_url = f'https://www.youtube.com/watch?v={videoId}'
+                cmd = "yt-dlp -f 'bestvideo[ext=mp4][height<=1080]+bestaudio[ext=m4a]/best[ext=mp4]' -o '" + viedoFileNameAndPath + "' '" + http_video_url + "' "
+                print("cmd :",cmd)
+                os.system(cmd)
         except Exception as e:
             logStr = f"[WORK x] Error: Program blocked while downloading video {videoId} to {viedoFileNameAndPath}."
             executeLog.write(logStr)
@@ -744,10 +750,17 @@ if __name__ == "__main__":
                 print("Now at: " + str(datetime.datetime.now()))
             else:
                 print(f"Try to downloading more high-definition video {videoId} to {voiceFhdFileNameAndPath}")
-                yt = YouTube(f'https://www.youtube.com/watch?v={videoId}', proxies=proxies, on_progress_callback=on_progress)
-                video  = yt.streams.filter(progressive=False, file_extension='mp4').order_by('resolution').desc().first()
-                video.download(output_path=workPath, filename=voiceFhdFileName)
-                executeLog.write(f"[WORK o] Download 1080p high-definition {videoId} to {voiceFhdFileNameAndPath} whith {video.resolution}.")
+                # yt = YouTube(f'https://www.youtube.com/watch?v={videoId}', proxies=proxies, on_progress_callback=on_progress)
+                # video  = yt.streams.filter(progressive=False, file_extension='mp4').order_by('resolution').desc().first()
+                # video.download(output_path=workPath, filename=voiceFhdFileName)
+                # executeLog.write(f"[WORK o] Download 1080p high-definition {videoId} to {voiceFhdFileNameAndPath} whith {video.resolution}.")
+                http_video_url = f"https://www.youtube.com/watch?v={videoId}"
+                # cmd = f'youtube-dl -f "bestvideo[ext=mp4][height<=2160]+bestaudio[ext=m4a]/best[ext=mp4]" -o "{voiceFhdFileNameAndPath}" "{http_video_url}"'
+                print("http_video_url: " + http_video_url)
+                cmd = f'youtube-dl "{http_video_url}"'
+                print("cmd: " + cmd)
+                print(f"Run command: {cmd}")
+                os.system(cmd)
         except:
             logStr = f"[WORK x] Error: Program blocked while downloading high-definition video {videoId} to {voiceFhdFileNameAndPath} whith {video.resolution}."
             executeLog.write(logStr)
